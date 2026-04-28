@@ -16,6 +16,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPartsService, PartsService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
 
+// register vendor service
+builder.Services.AddScoped<IVendorService, VendorService>();
+
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {

@@ -19,6 +19,7 @@ public class AppDbContext : IdentityDbContext<Users, IdentityRole<long>, long>
     public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
     public DbSet<PurchaseInvoiceItem> PurchaseInvoiceItems { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Vendor> Vendors { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
