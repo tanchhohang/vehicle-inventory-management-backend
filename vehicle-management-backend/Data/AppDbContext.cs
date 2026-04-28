@@ -11,10 +11,16 @@ public class AppDbContext : IdentityDbContext<Users, IdentityRole<long>, long>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Users> Users { get; set; }
-
-    // vendors table for vendor management feature
+    public DbSet<Part> Parts { get; set; }
+    public DbSet<Sale> Sales { get; set; }
+    public DbSet<SaleItem> SaleItems { get; set; }
+    public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<PartRequest> PartRequests { get; set; }
+    public DbSet<PurchaseInvoice> PurchaseInvoices { get; set; }
+    public DbSet<PurchaseInvoiceItem> PurchaseInvoiceItems { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     public DbSet<Vendor> Vendors { get; set; }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
