@@ -31,17 +31,22 @@ public class PurchaseInvoiceController : ControllerBase
     public ActionResult<PurchaseInvoice> Create([FromBody] PurchaseInvoice invoice)
     {
         invoice.Id = PurchaseInvoices.Count == 0 ? 1 : PurchaseInvoices.Max(i => i.Id) + 1;
-        invoice.Date = invoice.Date == default ? DateTime.UtcNow : invoice.Date;
-
-        var nextItemId = 1;
-        foreach (var item in invoice.Items)
-        {
-            item.Id = nextItemId++;
-            item.InvoiceId = invoice.Id;
-        }
 
         PurchaseInvoices.Add(invoice);
 
         return CreatedAtAction(nameof(GetById), new { id = invoice.Id }, invoice);
+    }
+
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        var invoice = PurchaseInvoices.FirstOrDefault(i => i.Id == id);
+        if (invoice is null)
+        {
+            return NotFound();
+        }
+
+        PurchaseInvoices.Remove(invoice);
+        return NoContent();
     }
 }
