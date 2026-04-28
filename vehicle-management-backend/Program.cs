@@ -4,8 +4,19 @@ using vehicle_management_backend.Data;
 using vehicle_management_backend.Models;
 using vehicle_management_backend.Services.Implementations;
 using vehicle_management_backend.Services.Interfaces;
+using vehicle_management_backend.Services.BackgroundServices;
+
+DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration["EmailSettings:SmtpHost"] = Environment.GetEnvironmentVariable("EMAIL_SMTP_HOST");
+builder.Configuration["EmailSettings:SmtpPort"] = Environment.GetEnvironmentVariable("EMAIL_SMTP_PORT");
+builder.Configuration["EmailSettings:SenderName"] = Environment.GetEnvironmentVariable("EMAIL_SENDER_NAME");
+builder.Configuration["EmailSettings:SenderEmail"] = Environment.GetEnvironmentVariable("EMAIL_SENDER_EMAIL");
+builder.Configuration["EmailSettings:SenderPassword"] = Environment.GetEnvironmentVariable("EMAIL_SENDER_PASSWORD");
+
+builder.Configuration["ConnectionStrings:Postgres"] = Environment.GetEnvironmentVariable("DB_CONNECTION");
 
 // Add DbContext
 builder.Services.AddDbContext<AppDbContext>((options) => { options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")); }
@@ -15,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>((options) => { options.UseNpgsql(bui
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPartsService, PartsService>();
 builder.Services.AddScoped<ISalesService, SalesService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // register vendor service
 builder.Services.AddScoped<IVendorService, VendorService>();
@@ -50,6 +62,8 @@ builder.Services.AddIdentity<Users, IdentityRole<long>>(options =>
     })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
 var app = builder.Build();
 
