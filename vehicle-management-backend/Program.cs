@@ -13,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>((options) => { options.UseNpgsql(bui
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPartsService, PartsService>();
+builder.Services.AddScoped<ISalesService, SalesService>();
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
