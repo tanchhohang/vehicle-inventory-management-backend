@@ -15,6 +15,15 @@ builder.Services.AddDbContext<AppDbContext>((options) => { options.UseNpgsql(bui
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
@@ -53,6 +62,8 @@ app.UseCors("AllowFrontend");
 // app.UseHttpsRedirection();
 
 app.UseAuthentication(); 
+
+app.UseCors("FrontendPolicy");
 
 app.UseAuthorization();
 
