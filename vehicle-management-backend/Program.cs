@@ -1,10 +1,41 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using vehicle_management_backend.Data;
+using vehicle_management_backend.Models;
+using vehicle_management_backend.Services.Implementations;
+using vehicle_management_backend.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Add DbContext
+builder.Services.AddDbContext<AppDbContext>((options) => { options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")); }
+);
+
 // Add services to the container.
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5176")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
+builder.Services.AddIdentity<Users, IdentityRole<long>>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+    })
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -12,9 +43,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+app.UseRouting();
 
-app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+
+// app.UseHttpsRedirection();
+
+app.UseAuthentication(); 
 
 app.UseAuthorization();
 
