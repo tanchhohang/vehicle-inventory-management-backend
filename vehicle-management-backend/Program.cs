@@ -32,26 +32,18 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 
 builder.Services.AddControllers();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("FrontendPolicy", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5176")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5176", "http://localhost:5177")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
+
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddIdentity<Users, IdentityRole<long>>(options =>
     {
@@ -81,8 +73,6 @@ app.UseCors("AllowFrontend");
 // app.UseHttpsRedirection();
 
 app.UseAuthentication(); 
-
-app.UseCors("FrontendPolicy");
 
 app.UseAuthorization();
 
